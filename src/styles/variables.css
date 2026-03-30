@@ -1,0 +1,64 @@
+:root {
+  /* Color palette */
+  --color-bg: #0a0a0f;
+  --color-surface: #12121a;
+  --color-surface-2: #1a1a28;
+  --color-surface-3: #222236;
+  --color-border: #2a2a40;
+
+  --color-text: #e8e8f0;
+  --color-text-dim: #8888a0;
+  --color-text-muted: #555570;
+
+  /* Accent colors */
+  --color-accent: #6c5ce7;
+  --color-accent-bright: #a29bfe;
+  --color-root: #e17055;
+  --color-root-bright: #ff7675;
+  --color-in-scale: #00b894;
+  --color-in-scale-dim: #00b89444;
+  --color-out-scale: #2d3436;
+  --color-pressed: #fdcb6e;
+  --color-target: #74b9ff;
+  --color-target-bright: #0984e3;
+  --color-correct: #00b894;
+  --color-incorrect: #d63031;
+
+  /* Pad styles */
+  --pad-gap: 3px;
+  --pad-radius: 6px;
+  --pad-bg: var(--color-surface-2);
+  --pad-bg-root: var(--color-root);
+  --pad-bg-in-scale: var(--color-surface-3);
+  --pad-bg-out-scale: var(--color-out-scale);
+  --pad-bg-pressed: var(--color-pressed);
+  --pad-bg-target: var(--color-target);
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Typography */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+  --font-size-xs: 0.7rem;
+  --font-size-sm: 0.8rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+
+  /* Transitions */
+  --transition-fast: 60ms ease-out;
+  --transition-normal: 150ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-normal: 0ms;
+  }
+}

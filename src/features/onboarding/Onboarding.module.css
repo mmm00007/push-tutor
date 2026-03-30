@@ -1,0 +1,89 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 15, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: var(--space-md);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: var(--space-xl);
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+}
+
+.progress {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: var(--space-lg);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-surface-3);
+  transition: background var(--transition-normal);
+}
+
+.dotActive {
+  background: var(--color-accent);
+  transform: scale(1.2);
+}
+
+.dotDone {
+  background: var(--color-accent-bright);
+  opacity: 0.5;
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+}
+
+.text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+  line-height: 1.7;
+  margin-bottom: var(--space-xl);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.backBtn {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+}
+
+.skipBtn {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.nextBtn {
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: 8px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.nextBtn:hover {
+  background: var(--color-accent-bright);
+}

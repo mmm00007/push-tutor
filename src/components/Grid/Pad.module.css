@@ -1,0 +1,102 @@
+.pad {
+  position: relative;
+  border-radius: var(--pad-radius);
+  background: var(--pad-bg);
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+  cursor: pointer;
+  touch-action: none;
+  contain: layout style paint;
+  will-change: transform;
+}
+
+.pad:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* Visual states */
+.outOfScale {
+  background: var(--pad-bg-out-scale);
+  opacity: 0.4;
+}
+
+.inScale {
+  background: var(--pad-bg-in-scale);
+  border-color: var(--color-in-scale-dim);
+}
+
+.root {
+  background: var(--pad-bg-root);
+  border-color: var(--color-root-bright);
+}
+
+.pressed {
+  background: var(--color-pressed) !important;
+  transform: scale(0.93);
+  border-color: var(--color-pressed);
+  z-index: 2;
+}
+
+.target {
+  background: var(--color-target);
+  border-color: var(--color-target-bright);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.targetCorrect {
+  background: var(--color-correct);
+  border-color: var(--color-correct);
+}
+
+.targetIncorrect {
+  background: var(--color-incorrect);
+  border-color: var(--color-incorrect);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .target { animation: none; opacity: 1; }
+}
+
+/* Note label inside pad */
+.noteLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+  opacity: 0.8;
+  pointer-events: none;
+  line-height: 1;
+  text-align: center;
+}
+
+.root .noteLabel {
+  font-weight: 700;
+  opacity: 1;
+}
+
+.outOfScale .noteLabel {
+  opacity: 0.4;
+}
+
+.pressed .noteLabel {
+  color: var(--color-bg);
+  opacity: 1;
+}
+
+/* Interval label for lesson targets */
+.intervalLabel {
+  position: absolute;
+  bottom: 2px;
+  font-size: 0.55rem;
+  color: var(--color-text);
+  opacity: 0.6;
+  pointer-events: none;
+}

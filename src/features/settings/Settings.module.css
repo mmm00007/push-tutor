@@ -1,0 +1,132 @@
+.container {
+  padding: var(--space-md);
+  overflow-y: auto;
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+  max-width: 500px;
+}
+
+.heading {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-lg);
+}
+
+.section {
+  margin-bottom: var(--space-lg);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-sm);
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+}
+
+.toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--color-surface-3);
+  border-radius: 12px;
+  transition: background var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: var(--color-text);
+  border-radius: 50%;
+  transition: transform var(--transition-normal);
+}
+
+.toggle input:checked + .switch {
+  background: var(--color-accent);
+}
+
+.toggle input:checked + .switch::after {
+  transform: translateX(20px);
+}
+
+.toggle input:focus-visible + .switch {
+  outline: 2px solid var(--color-accent-bright);
+  outline-offset: 2px;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  font-size: var(--font-size-sm);
+}
+
+.slider label {
+  min-width: 60px;
+}
+
+.slider input[type="range"] {
+  flex: 1;
+  accent-color: var(--color-accent);
+  height: 4px;
+}
+
+.sliderValue {
+  min-width: 40px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-dim);
+}
+
+.dangerBtn {
+  display: block;
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  border: 1px solid var(--color-incorrect);
+  color: var(--color-incorrect);
+  border-radius: 6px;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-sm);
+  width: 100%;
+  text-align: left;
+}
+
+.dangerBtn:hover {
+  background: rgba(214, 48, 49, 0.1);
+}
+
+.about {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+  line-height: 1.6;
+}
+
+.version {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  margin-top: var(--space-xs);
+}

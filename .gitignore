@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dev-dist/
+*.local
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+coverage/
+packages/dsp-core/target/
+packages/dsp-core/pkg/

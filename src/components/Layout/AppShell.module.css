@@ -1,0 +1,76 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* In landscape, nav on the left */
+@media (orientation: landscape) {
+  .shell {
+    flex-direction: row-reverse;
+  }
+}
+
+.main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.nav {
+  display: flex;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-xs) 0;
+  flex-shrink: 0;
+}
+
+@media (orientation: landscape) {
+  .nav {
+    flex-direction: column;
+    border-top: none;
+    border-left: 1px solid var(--color-border);
+    padding: var(--space-sm) 0;
+    width: 64px;
+  }
+}
+
+.navBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: var(--space-xs);
+  color: var(--color-text-dim);
+  transition: color var(--transition-fast);
+  min-height: 44px;
+}
+
+.navBtn:hover {
+  color: var(--color-text);
+}
+
+.navBtn.navActive {
+  color: var(--color-accent-bright);
+}
+
+.navIcon {
+  font-size: 1.2rem;
+}
+
+.navLabel {
+  font-size: var(--font-size-xs);
+}
+
+@media (orientation: landscape) {
+  .navBtn {
+    flex: 0;
+    padding: var(--space-sm) var(--space-xs);
+  }
+}
