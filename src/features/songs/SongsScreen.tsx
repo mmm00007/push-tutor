@@ -5,28 +5,109 @@ import { useGridStore } from '@/stores/grid-store';
 import { Grid } from '@/components/Grid/Grid';
 import { type PadState } from '@/components/Grid/Pad';
 import { noteName } from '@/lib/music-theory/notes';
+import type { PadInfo } from '@/lib/music-theory';
 import styles from './SongsScreen.module.css';
 
-function chordMidiNotes(chord: ProgressionChord, baseOctaveMidi: number): number[] {
-  const rootMidi = baseOctaveMidi + chord.rootPitchClass;
-  return chord.intervals.map(i => rootMidi + i);
+/**
+ * Find the optimal fingering for a chord on the grid.
+ * Uses the chord's shape offsets (dx, dy) and tries every possible root
+ * position to find the one where the entire shape fits and is most
+ * centered / reachable. Returns the primary pad positions.
+ */
+function findOptimalFingering(
+  chord: ProgressionChord,
+  pads: PadInfo[][],
+  gridSize: number,
+  numRows: number,
+): { x: number; y: number; midi: number }[] {
+  const shape = chord.shape;
+  let bestPositions: { x: number; y: number; midi: number }[] = [];
+  let bestScore = -Infinity;
+
+  // Try every pad as potential root position
+  for (let ry = 0; ry < numRows; ry++) {
+    for (let rx = 0; rx < gridSize; rx++) {
+      const rootPad = pads[ry]?.[rx];
+      if (!rootPad?.midi) continue;
+      // Root must match the chord's root pitch class
+      if (rootPad.midi % 12 !== chord.rootPitchClass) continue;
+
+      // Check if entire shape fits from this root
+      const positions: { x: number; y: number; midi: number }[] = [];
+      let fits = true;
+      for (const offset of shape) {
+        const px = rx + offset.dx;
+        const py = ry + offset.dy;
+        if (px < 0 || px >= gridSize || py < 0 || py >= numRows) {
+          fits = false;
+          break;
+        }
+        const pad = pads[py]?.[px];
+        if (!pad?.midi) { fits = false; break; }
+        positions.push({ x: px, y: py, midi: pad.midi });
+      }
+      if (!fits) continue;
+
+      // Score: prefer centered positions, lower on grid (reachable)
+      // Center x around 2-4, center y around 1-3
+      const avgX = positions.reduce((s, p) => s + p.x, 0) / positions.length;
+      const avgY = positions.reduce((s, p) => s + p.y, 0) / positions.length;
+      const centerX = gridSize / 2 - 1;
+      const centerY = numRows / 2 - 1;
+      const score = -Math.abs(avgX - centerX) - Math.abs(avgY - centerY) * 0.5;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestPositions = positions;
+      }
+    }
+  }
+
+  return bestPositions;
+}
+
+/**
+ * Find all pads on the grid that share the same pitch classes as the chord,
+ * excluding the primary fingering positions.
+ */
+function findGhostPositions(
+  chordPitchClasses: Set<number>,
+  primaryKeys: Set<string>,
+  pads: PadInfo[][],
+  numRows: number,
+  gridSize: number,
+): { x: number; y: number }[] {
+  const ghosts: { x: number; y: number }[] = [];
+  for (let y = 0; y < numRows; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      const key = `${x},${y}`;
+      if (primaryKeys.has(key)) continue;
+      const pad = pads[y]?.[x];
+      if (pad?.midi != null && chordPitchClasses.has(pad.midi % 12)) {
+        ghosts.push({ x, y });
+      }
+    }
+  }
+  return ghosts;
 }
 
 export function SongsScreen() {
   const [selected, setSelected] = useState<Progression | null>(null);
   const [playing, setPlaying] = useState(false);
   const [currentChordIdx, setCurrentChordIdx] = useState(-1);
-  const [padOverrides, setPadOverrides] = useState<Map<number, PadState>>(new Map());
+  const [padOverrides, setPadOverrides] = useState<Map<string, PadState>>(new Map());
   const audioNoteOn = useAudioStore(s => s.noteOn);
   const audioNoteOff = useAudioStore(s => s.noteOff);
   const audioAllOff = useAudioStore(s => s.allNotesOff);
   const gridNoteOn = useGridStore(s => s.noteOn);
   const gridNoteOff = useGridStore(s => s.noteOff);
   const gridAllOff = useGridStore(s => s.allNotesOff);
+  const pads = useGridStore(s => s.pads);
+  const config = useGridStore(s => s.config);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const playingRef = useRef(false);
 
-  const BASE_OCTAVE_MIDI = 48;
+  const numRows = config.visibleRows ?? config.gridSize;
 
   const stopPlayback = useCallback(() => {
     playingRef.current = false;
@@ -48,23 +129,49 @@ export function SongsScreen() {
   const playChord = useCallback((chord: ProgressionChord) => {
     audioAllOff();
     gridAllOff();
-    const notes = chordMidiNotes(chord, BASE_OCTAVE_MIDI);
-    const overrides = new Map<number, PadState>();
-    for (const midi of notes) {
-      audioNoteOn(midi, 0.65);
-      gridNoteOn(midi);
-      overrides.set(midi, 'target');
+
+    // Find optimal fingering
+    const primary = findOptimalFingering(chord, pads, config.gridSize, numRows);
+    const overrides = new Map<string, PadState>();
+
+    if (primary.length > 0) {
+      // Play audio for the primary notes
+      for (const pos of primary) {
+        audioNoteOn(pos.midi, 0.65);
+        gridNoteOn(pos.midi);
+      }
+
+      // Mark primary positions as target (yellow)
+      const primaryKeys = new Set<string>();
+      for (const pos of primary) {
+        const key = `${pos.x},${pos.y}`;
+        overrides.set(key, 'target');
+        primaryKeys.add(key);
+      }
+
+      // Find and mark ghost positions (same pitch classes, different pads)
+      const pitchClasses = new Set(chord.intervals.map(i => (chord.rootPitchClass + i) % 12));
+      const ghosts = findGhostPositions(pitchClasses, primaryKeys, pads, numRows, config.gridSize);
+      for (const pos of ghosts) {
+        overrides.set(`${pos.x},${pos.y}`, 'targetGhost');
+      }
     }
+
     setPadOverrides(overrides);
-  }, [audioNoteOn, audioAllOff, gridNoteOn, gridAllOff]);
+  }, [audioNoteOn, audioAllOff, gridNoteOn, gridAllOff, pads, config.gridSize, numRows]);
 
   const releaseChord = useCallback((chord: ProgressionChord) => {
-    const notes = chordMidiNotes(chord, BASE_OCTAVE_MIDI);
-    for (const midi of notes) {
-      audioNoteOff(midi);
-      gridNoteOff(midi);
+    // Release all notes with these pitch classes
+    const pitchClasses = new Set(chord.intervals.map(i => (chord.rootPitchClass + i) % 12));
+    for (const row of pads) {
+      for (const pad of row) {
+        if (pad.midi != null && pitchClasses.has(pad.midi % 12)) {
+          audioNoteOff(pad.midi);
+          gridNoteOff(pad.midi);
+        }
+      }
     }
-  }, [audioNoteOff, gridNoteOff]);
+  }, [audioNoteOff, gridNoteOff, pads]);
 
   const startPlayback = useCallback((prog: Progression) => {
     stopPlayback();

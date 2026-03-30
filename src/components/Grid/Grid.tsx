@@ -13,8 +13,8 @@ interface GridProps {
   /** Root position for targets (grid x,y). */
   targetRootX?: number;
   targetRootY?: number;
-  /** Override pad state for specific MIDI notes. */
-  padStateOverrides?: Map<number, PadState>;
+  /** Override pad state by position key "x,y". */
+  padStateOverrides?: Map<string, PadState>;
   /** Callback when a note is played. */
   onNotePlay?: (midi: number) => void;
 }
@@ -82,13 +82,12 @@ export function Grid({ targetShape, targetRootX = 0, targetRootY = 0, padStateOv
   const scaleMode = config.scaleMode;
 
   const getPadState = useCallback((pad: PadInfo, x: number, y: number): PadState => {
-    if (pad.midi !== null && padStateOverrides?.has(pad.midi)) {
-      return padStateOverrides.get(pad.midi)!;
-    }
     const key = `${x},${y}`;
+    if (padStateOverrides?.has(key)) {
+      return padStateOverrides.get(key)!;
+    }
     if (targetSet.has(key)) return 'target';
     if (pad.isRoot) return 'root';
-    // Octave marker: C notes (pitch class 0) in chromatic mode that aren't the root
     if (pad.midi !== null && scaleMode === 'chromatic' && ((pad.midi % 12) === 0)) return 'octaveMarker';
     if (pad.inScale) return 'inScale';
     return 'outOfScale';

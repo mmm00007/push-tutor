@@ -47,10 +47,17 @@
   z-index: 2;
 }
 
+/* Primary fingering position — bright yellow */
 .target {
-  background: var(--color-target);
-  border-color: var(--color-target-bright);
-  animation: pulse 1.5s ease-in-out infinite;
+  background: var(--color-pressed);
+  border-color: var(--color-pressed);
+}
+
+/* Same note on a different pad — dim ghost */
+.targetGhost {
+  background: var(--color-target-ghost);
+  border-color: var(--color-target-ghost-bright);
+  opacity: 0.6;
 }
 
 .targetCorrect {

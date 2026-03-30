@@ -21,12 +21,13 @@ export function QuizMode() {
   const endQuiz = useLessonStore(s => s.endQuiz);
 
   const activeNotes = useGridStore(s => s.activeNotes);
+  const pads = useGridStore(s => s.pads);
   const config = useGridStore(s => s.config);
   const allNotesOff = useGridStore(s => s.allNotesOff);
   const audioAllOff = useAudioStore(s => s.allNotesOff);
 
   const [selectedLesson, setSelectedLesson] = useState<string>(lessons[0]?.id ?? '');
-  const [padOverrides, setPadOverrides] = useState<Map<number, PadState>>(new Map());
+  const [padOverrides, setPadOverrides] = useState<Map<string, PadState>>(new Map());
   const checkTimeout = useRef<ReturnType<typeof setTimeout>>();
 
   // Get all quiz questions for current lesson
@@ -61,10 +62,15 @@ export function QuizMode() {
       }
     }
 
-    // Visual feedback
-    const overrides = new Map<number, PadState>();
-    for (const midi of pressedNotes) {
-      overrides.set(midi, correct ? 'targetCorrect' : 'targetIncorrect');
+    // Visual feedback — find pad positions for pressed MIDI notes
+    const overrides = new Map<string, PadState>();
+    const state = correct ? 'targetCorrect' as const : 'targetIncorrect' as const;
+    for (const row of pads) {
+      for (const pad of row) {
+        if (pad.midi !== null && pressedNotes.includes(pad.midi)) {
+          overrides.set(`${pad.x},${pad.y}`, state);
+        }
+      }
     }
     setPadOverrides(overrides);
 

@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { noteLabel as formatNoteLabel } from '@/lib/music-theory/notes';
 import styles from './Pad.module.css';
 
-export type PadState = 'outOfScale' | 'inScale' | 'root' | 'octaveMarker' | 'target' | 'targetCorrect' | 'targetIncorrect';
+export type PadState = 'outOfScale' | 'inScale' | 'root' | 'octaveMarker' | 'target' | 'targetGhost' | 'targetCorrect' | 'targetIncorrect';
 
 interface PadProps {
   midi: number | null;
