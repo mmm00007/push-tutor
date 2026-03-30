@@ -107,18 +107,26 @@ export function SongsScreen() {
   const config = useGridStore(s => s.config);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const playingRef = useRef(false);
+  const activeChordMidis = useRef<number[]>([]);
 
   const numRows = config.visibleRows ?? config.gridSize;
+
+  const releaseActiveNotes = useCallback(() => {
+    for (const midi of activeChordMidis.current) {
+      audioNoteOff(midi);
+      gridNoteOff(midi);
+    }
+    activeChordMidis.current = [];
+  }, [audioNoteOff, gridNoteOff]);
 
   const stopPlayback = useCallback(() => {
     playingRef.current = false;
     setPlaying(false);
     setCurrentChordIdx(-1);
     setPadOverrides(new Map());
-    audioAllOff();
-    gridAllOff();
+    releaseActiveNotes();
     if (timerRef.current) clearTimeout(timerRef.current);
-  }, [audioAllOff, gridAllOff]);
+  }, [releaseActiveNotes]);
 
   useEffect(() => {
     return () => {
@@ -128,21 +136,19 @@ export function SongsScreen() {
   }, []);
 
   const playChord = useCallback((chord: ProgressionChord) => {
-    audioAllOff();
-    gridAllOff();
+    releaseActiveNotes();
 
-    // Find optimal fingering
     const primary = findOptimalFingering(chord, pads, config.gridSize, numRows);
     const overrides = new Map<string, PadState>();
+    const playedMidis: number[] = [];
 
     if (primary.length > 0) {
-      // Play audio for the primary notes
       for (const pos of primary) {
         audioNoteOn(pos.midi, 0.65);
         gridNoteOn(pos.midi);
+        playedMidis.push(pos.midi);
       }
 
-      // Mark primary positions as target (yellow)
       const primaryKeys = new Set<string>();
       for (const pos of primary) {
         const key = `${pos.x},${pos.y}`;
@@ -150,7 +156,6 @@ export function SongsScreen() {
         primaryKeys.add(key);
       }
 
-      // Find and mark ghost positions (exact same MIDI on different pads)
       const primaryMidis = new Set(primary.map(p => p.midi));
       const ghosts = findGhostPositions(primaryMidis, primaryKeys, pads, numRows, config.gridSize);
       for (const pos of ghosts) {
@@ -158,21 +163,9 @@ export function SongsScreen() {
       }
     }
 
+    activeChordMidis.current = playedMidis;
     setPadOverrides(overrides);
-  }, [audioNoteOn, audioAllOff, gridNoteOn, gridAllOff, pads, config.gridSize, numRows]);
-
-  const releaseChord = useCallback((chord: ProgressionChord) => {
-    // Release all notes with these pitch classes
-    const pitchClasses = new Set(chord.intervals.map(i => (chord.rootPitchClass + i) % 12));
-    for (const row of pads) {
-      for (const pad of row) {
-        if (pad.midi != null && pitchClasses.has(pad.midi % 12)) {
-          audioNoteOff(pad.midi);
-          gridNoteOff(pad.midi);
-        }
-      }
-    }
-  }, [audioNoteOff, gridNoteOff, pads]);
+  }, [audioNoteOn, releaseActiveNotes, gridNoteOn, pads, config.gridSize, numRows]);
 
   const startPlayback = useCallback((prog: Progression) => {
     stopPlayback();
@@ -191,7 +184,7 @@ export function SongsScreen() {
       playChord(chord);
 
       timerRef.current = setTimeout(() => {
-        releaseChord(chord);
+        releaseActiveNotes();
         chordIndex++;
         if (chordIndex < prog.chords.length * 2 && playingRef.current) {
           timerRef.current = setTimeout(playNext, beatMs * 0.5);
@@ -202,7 +195,7 @@ export function SongsScreen() {
     }
 
     playNext();
-  }, [playChord, releaseChord, stopPlayback]);
+  }, [playChord, releaseActiveNotes, stopPlayback]);
 
   // Song list view
   if (!selected) {
@@ -265,7 +258,7 @@ export function SongsScreen() {
                 setCurrentChordIdx(i);
                 playChord(chord);
                 setTimeout(() => {
-                  releaseChord(chord);
+                  releaseActiveNotes();
                   setPadOverrides(new Map());
                   setCurrentChordIdx(-1);
                 }, 1500);
