@@ -3,6 +3,7 @@ import { AppShell } from '@/components/Layout/AppShell';
 import { Onboarding } from '@/features/onboarding/Onboarding';
 import { FreePlay } from '@/features/practice/FreePlay';
 import { ControlsScreen } from '@/features/controls/ControlsScreen';
+import { SongsScreen } from '@/features/songs/SongsScreen';
 import { LessonList } from '@/features/lessons/LessonList';
 import { LessonView } from '@/features/lessons/LessonView';
 import { QuizMode } from '@/features/quiz/QuizMode';
@@ -24,6 +25,8 @@ function ScreenRouter() {
       return <FreePlay />;
     case 'controls':
       return <ControlsScreen />;
+    case 'songs':
+      return <SongsScreen />;
     case 'lessons':
       return <LessonList />;
     case 'quiz':

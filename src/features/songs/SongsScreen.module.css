@@ -1,0 +1,193 @@
+.container {
+  padding: var(--space-md);
+  overflow-y: auto;
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+.heading {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+}
+
+.subheading {
+  color: var(--color-text-dim);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.card {
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  transition: border-color var(--transition-fast);
+}
+
+.card:hover {
+  border-color: var(--color-accent);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.cardTitle {
+  font-weight: 600;
+}
+
+.cardArtist {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-bright);
+}
+
+.cardChords {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+.cardDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+  line-height: 1.5;
+}
+
+.cardTempo {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Detail view */
+.detail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.backBtn {
+  font-size: var(--font-size-sm);
+  color: var(--color-accent-bright);
+  padding: var(--space-xs) var(--space-sm);
+  flex-shrink: 0;
+}
+
+.detailTitle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.songName {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.songArtist {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-dim);
+}
+
+.playBtn {
+  padding: 6px 14px;
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: 6px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 72px;
+  text-align: center;
+}
+
+.playBtn:hover {
+  background: var(--color-accent-bright);
+}
+
+.playBtn.playing {
+  background: var(--color-incorrect);
+}
+
+/* Chord bar */
+.chordBar {
+  display: flex;
+  gap: 4px;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+
+.chordBar::-webkit-scrollbar {
+  display: none;
+}
+
+.chordChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 4px 12px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+  min-width: 52px;
+}
+
+.chordChip:hover {
+  border-color: var(--color-accent);
+}
+
+.chordChip.chordActive {
+  background: var(--color-accent);
+  border-color: var(--color-accent-bright);
+}
+
+.chordName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.chordRoot {
+  font-size: 0.6rem;
+  color: var(--color-text-dim);
+}
+
+.chordActive .chordRoot {
+  color: rgba(255, 255, 255, 0.7);
+}
