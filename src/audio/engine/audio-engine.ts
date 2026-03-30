@@ -104,6 +104,10 @@ export class WebAudioEngine implements AudioEngine {
     env.connect(this.masterGain);
     osc.start(now);
     osc.stop(now + duration + 0.01);
+    osc.onended = () => {
+      osc.disconnect();
+      env.disconnect();
+    };
   }
 
   dispose(): void {

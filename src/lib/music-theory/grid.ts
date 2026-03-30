@@ -21,9 +21,12 @@ export const ROW_INTERVALS: Record<LayoutMode, number> = {
   sequential: 8,
 };
 
+export type VisibleRows = 4 | 5 | 6 | 7 | 8;
+
 export interface GridConfig {
   readonly baseMidi: number;      // MIDI note at bottom-left (0,0)
-  readonly gridSize: number;      // 8 for 8x8
+  readonly gridSize: number;      // always 8 columns
+  readonly visibleRows: VisibleRows; // 4–8 rows shown (zoom)
   readonly layout: LayoutMode;    // 4ths, 3rds, sequential
   readonly scaleMode: ScaleMode;  // chromatic or inKey
   readonly rootPitchClass: number; // 0=C, 1=C#, ... 11=B
@@ -31,13 +34,21 @@ export interface GridConfig {
   readonly octaveShift: number;    // +/- octaves from default
 }
 
+/**
+ * Default: Chromatic 4ths for this app (chord shape tutor).
+ * Note: Push 3 defaults to In Key mode. We default to Chromatic because
+ * this app specifically teaches chromatic-mode chord shapes to beginners.
+ * The default scale is Major (matching Push 3), so In Key mode works correctly
+ * when users switch to it.
+ */
 export const DEFAULT_GRID_CONFIG: GridConfig = {
-  baseMidi: 36,        // C1
+  baseMidi: 36,        // C1 (MIDI 36)
   gridSize: 8,
+  visibleRows: 8,
   layout: 'fourths',
   scaleMode: 'chromatic',
   rootPitchClass: 0,   // C
-  scale: { name: 'Chromatic', intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  scale: { name: 'Major', intervals: [0, 2, 4, 5, 7, 9, 11] },
   octaveShift: 0,
 };
 
@@ -58,13 +69,20 @@ export function chromaticMidi(x: number, y: number, baseMidi: number, layout: La
 export function buildInKeyGrid(config: GridConfig): (number | null)[][] {
   const { scale, rootPitchClass, gridSize, octaveShift } = config;
   const degrees = scale.intervals;
-  const degreesPerRow = config.layout === 'fourths' ? 3 : config.layout === 'thirds' ? 2 : 4;
+  // Degrees-per-row approximates the interval feel within the scale:
+  // 4ths: 3 degrees for 7-note scales (≈ perfect fourth), 2 for pentatonic
+  // 3rds: 2 degrees for 7-note scales (≈ major third)
+  // Sequential: full row width (8) — no vertical offset, pure linear progression
+  const baseDegrees = config.layout === 'fourths' ? 3 : config.layout === 'thirds' ? 2 : gridSize;
+  // Adjust for pentatonic/smaller scales in 4ths mode
+  const degreesPerRow = (config.layout === 'fourths' && degrees.length <= 5) ? 2 : baseDegrees;
 
   // Base octave: start from rootPitchClass in a reasonable octave
   const baseOctaveMidi = (3 + octaveShift) * 12 + rootPitchClass;
 
+  const rows = config.visibleRows ?? gridSize;
   const grid: (number | null)[][] = [];
-  for (let y = 0; y < gridSize; y++) {
+  for (let y = 0; y < rows; y++) {
     const row: (number | null)[] = [];
     for (let x = 0; x < gridSize; x++) {
       const degreeIndex = x + y * degreesPerRow;
@@ -83,17 +101,19 @@ export function buildInKeyGrid(config: GridConfig): (number | null)[][] {
   return grid;
 }
 
-/** Build the full grid as a 2D array [y][x] of MIDI values. */
+/** Build the full grid as a 2D array [y][x] of MIDI values.
+ *  Only `visibleRows` rows are generated (zoom feature). */
 export function buildGrid(config: GridConfig): (number | null)[][] {
   if (config.scaleMode === 'inKey') {
     return buildInKeyGrid(config);
   }
 
-  const { gridSize, layout, octaveShift } = config;
+  const { gridSize, visibleRows, layout, octaveShift } = config;
+  const rows = visibleRows ?? gridSize;
   const baseMidi = config.baseMidi + octaveShift * 12;
   const grid: (number | null)[][] = [];
 
-  for (let y = 0; y < gridSize; y++) {
+  for (let y = 0; y < rows; y++) {
     const row: (number | null)[] = [];
     for (let x = 0; x < gridSize; x++) {
       const midi = chromaticMidi(x, y, baseMidi, layout);

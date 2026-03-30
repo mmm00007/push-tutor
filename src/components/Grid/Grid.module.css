@@ -12,9 +12,9 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(8, 1fr);
+  /* grid-template-rows set via inline style for zoom */
   gap: var(--pad-gap);
-  aspect-ratio: 1;
+  /* aspect-ratio set via inline style for zoom */
   max-height: 100%;
   max-width: 100%;
   width: auto;
@@ -27,7 +27,6 @@
   .grid {
     height: min(calc(100vh - 80px), calc(100vw - 240px));
     width: auto;
-    aspect-ratio: 1;
   }
 }
 
@@ -36,7 +35,6 @@
   .grid {
     width: min(calc(100vw - 16px), calc(100vh - 200px));
     height: auto;
-    aspect-ratio: 1;
   }
 }
 

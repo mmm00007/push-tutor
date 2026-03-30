@@ -17,9 +17,9 @@ export function pitchClass(midi: number): number {
   return ((midi % 12) + 12) % 12;
 }
 
-/** Octave number (C4 = MIDI 60). */
+/** Octave number using Ableton/Yamaha convention (C3 = MIDI 60, C1 = MIDI 36). */
 export function octaveOf(midi: number): number {
-  return Math.floor(midi / 12) - 1;
+  return Math.floor(midi / 12) - 2;
 }
 
 /** Note name from MIDI number (sharp notation). */
@@ -39,20 +39,20 @@ export function noteLabelFlat(midi: number): string {
   return `${flat ?? name}${octaveOf(midi)}`;
 }
 
-/** MIDI note number from note name and octave. C4 = 60. */
+/** MIDI note number from note name and octave. C3 = 60 (Ableton convention). */
 export function midiFromNote(name: NoteName, octave: number): number {
   const index = NOTE_NAMES.indexOf(name);
-  return (octave + 1) * 12 + index;
+  return (octave + 2) * 12 + index;
 }
 
-/** Parse a note string like "C4" or "F#2" to MIDI number. */
+/** Parse a note string like "C3" or "F#1" to MIDI number (Ableton convention). */
 export function parseMidiNote(note: string): number | null {
   const match = note.match(/^([A-G]#?)(-?\d+)$/);
   if (!match) return null;
   const [, name, octStr] = match;
   const index = NOTE_NAMES.indexOf(name as NoteName);
   if (index === -1) return null;
-  return (parseInt(octStr!, 10) + 1) * 12 + index;
+  return (parseInt(octStr!, 10) + 2) * 12 + index;
 }
 
 /** Clamp a MIDI value to valid range. */

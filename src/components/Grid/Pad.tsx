@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { noteLabel as formatNoteLabel } from '@/lib/music-theory/notes';
 import styles from './Pad.module.css';
 
-export type PadState = 'outOfScale' | 'inScale' | 'root' | 'target' | 'targetCorrect' | 'targetIncorrect';
+export type PadState = 'outOfScale' | 'inScale' | 'root' | 'octaveMarker' | 'target' | 'targetCorrect' | 'targetIncorrect';
 
 interface PadProps {
   midi: number | null;
@@ -10,9 +10,9 @@ interface PadProps {
   isPressed: boolean;
   showNoteNames: boolean;
   intervalLabel?: string;
-  onPointerDown: (midi: number) => void;
-  onPointerUp: (midi: number) => void;
-  onPointerEnter: (midi: number, pressing: boolean) => void;
+  onPointerDown: (midi: number, pointerId?: number) => void;
+  onPointerUp: (midi: number, pointerId?: number) => void;
+  onPointerEnter: (midi: number, pressing: boolean, pointerId?: number) => void;
 }
 
 export const Pad = memo(function Pad({
@@ -33,17 +33,16 @@ export const Pad = memo(function Pad({
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-    if (midi !== null) onPointerDown(midi);
+    if (midi !== null) onPointerDown(midi, e.pointerId);
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
     e.preventDefault();
-    if (midi !== null) onPointerUp(midi);
+    if (midi !== null) onPointerUp(midi, e.pointerId);
   };
 
   const handlePointerEnter = (e: React.PointerEvent) => {
-    if (midi !== null) onPointerEnter(midi, e.pressure > 0 || e.buttons > 0);
+    if (midi !== null) onPointerEnter(midi, e.pressure > 0 || e.buttons > 0, e.pointerId);
   };
 
   return (

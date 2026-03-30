@@ -22,15 +22,18 @@ describe('notes', () => {
     });
   });
 
-  describe('octaveOf', () => {
-    it('C4 = midi 60 → octave 4', () => {
-      expect(octaveOf(60)).toBe(4);
+  describe('octaveOf (Ableton convention: C3 = MIDI 60)', () => {
+    it('C3 = midi 60 → octave 3', () => {
+      expect(octaveOf(60)).toBe(3);
     });
     it('C1 = midi 36 → octave 1', () => {
-      expect(octaveOf(36)).toBe(2);
+      expect(octaveOf(36)).toBe(1);
     });
-    it('A0 = midi 21 → octave 0', () => {
-      expect(octaveOf(21)).toBe(0);
+    it('A-1 = midi 21 → octave -1', () => {
+      expect(octaveOf(21)).toBe(-1);
+    });
+    it('C-2 = midi 0 → octave -2', () => {
+      expect(octaveOf(0)).toBe(-2);
     });
   });
 
@@ -40,21 +43,23 @@ describe('notes', () => {
     it('midi 69 = A', () => expect(noteName(69)).toBe('A'));
   });
 
-  describe('noteLabel', () => {
-    it('midi 60 = C4', () => expect(noteLabel(60)).toBe('C4'));
-    it('midi 69 = A4', () => expect(noteLabel(69)).toBe('A4'));
+  describe('noteLabel (Ableton convention)', () => {
+    it('midi 60 = C3', () => expect(noteLabel(60)).toBe('C3'));
+    it('midi 69 = A3', () => expect(noteLabel(69)).toBe('A3'));
+    it('midi 36 = C1', () => expect(noteLabel(36)).toBe('C1'));
   });
 
-  describe('midiFromNote', () => {
-    it('C4 = 60', () => expect(midiFromNote('C', 4)).toBe(60));
-    it('A4 = 69', () => expect(midiFromNote('A', 4)).toBe(69));
-    it('C-1 = 0', () => expect(midiFromNote('C', -1)).toBe(0));
+  describe('midiFromNote (Ableton convention)', () => {
+    it('C3 = 60', () => expect(midiFromNote('C', 3)).toBe(60));
+    it('A3 = 69', () => expect(midiFromNote('A', 3)).toBe(69));
+    it('C-2 = 0', () => expect(midiFromNote('C', -2)).toBe(0));
+    it('C1 = 36', () => expect(midiFromNote('C', 1)).toBe(36));
   });
 
-  describe('parseMidiNote', () => {
-    it('parses C4 to 60', () => expect(parseMidiNote('C4')).toBe(60));
-    it('parses A4 to 69', () => expect(parseMidiNote('A4')).toBe(69));
-    it('parses F#2 to 42', () => expect(parseMidiNote('F#2')).toBe(42));
+  describe('parseMidiNote (Ableton convention)', () => {
+    it('parses C3 to 60', () => expect(parseMidiNote('C3')).toBe(60));
+    it('parses A3 to 69', () => expect(parseMidiNote('A3')).toBe(69));
+    it('parses F#1 to 42', () => expect(parseMidiNote('F#1')).toBe(42));
     it('returns null for invalid', () => expect(parseMidiNote('X9')).toBeNull());
   });
 

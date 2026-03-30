@@ -50,12 +50,12 @@ export function QuizMode() {
 
     let correct = false;
     for (const rootMidi of rootCandidates) {
-      // Check if the remaining notes match the shape intervals
-      const expectedIntervals = new Set(acceptedShape.map(s => s.dx + s.dy * 5));
-      const actualIntervals = new Set(pressedNotes.map(n => n - rootMidi));
+      // Compare pitch-class distances (mod 12) to handle octave-crossing voicings
+      const expectedPCs = new Set(acceptedShape.map(s => (((s.dx + s.dy * 5) % 12) + 12) % 12));
+      const actualPCs = new Set(pressedNotes.map(n => (((n - rootMidi) % 12) + 12) % 12));
 
-      if (expectedIntervals.size === actualIntervals.size &&
-          [...expectedIntervals].every(i => actualIntervals.has(i))) {
+      if (expectedPCs.size === actualPCs.size &&
+          [...expectedPCs].every(i => actualPCs.has(i))) {
         correct = true;
         break;
       }

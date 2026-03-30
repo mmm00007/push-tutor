@@ -3,7 +3,15 @@ import { useAudioStore } from '@/stores/audio-store';
 import { SCALE_OPTIONS, ROOT_OPTIONS } from '@/content/scales/scale-data';
 import { PRESET_KEYS, PRESETS } from '@/audio/presets';
 import { SCALES } from '@/lib/music-theory/scales';
+import type { VisibleRows } from '@/lib/music-theory';
 import styles from './GridControls.module.css';
+
+const ROW_OPTIONS: { value: VisibleRows; label: string }[] = [
+  { value: 4, label: '4' },
+  { value: 5, label: '5' },
+  { value: 6, label: '6' },
+  { value: 8, label: '8' },
+];
 
 export function GridControls() {
   const config = useGridStore(s => s.config);
@@ -12,6 +20,7 @@ export function GridControls() {
   const setLayout = useGridStore(s => s.setLayout);
   const setScaleMode = useGridStore(s => s.setScaleMode);
   const setOctaveShift = useGridStore(s => s.setOctaveShift);
+  const setVisibleRows = useGridStore(s => s.setVisibleRows);
   const presetName = useAudioStore(s => s.presetName);
   const setPreset = useAudioStore(s => s.setPreset);
 
@@ -108,6 +117,23 @@ export function GridControls() {
           >
             +
           </button>
+        </div>
+      </div>
+
+      <div className={styles.group}>
+        <label className={styles.label}>Rows</label>
+        <div className={styles.buttonGroup} role="radiogroup" aria-label="Visible rows">
+          {ROW_OPTIONS.map(opt => (
+            <button
+              key={opt.value}
+              className={`${styles.toggleBtn} ${config.visibleRows === opt.value ? styles.active : ''}`}
+              onClick={() => setVisibleRows(opt.value)}
+              role="radio"
+              aria-checked={config.visibleRows === opt.value}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
       </div>
 

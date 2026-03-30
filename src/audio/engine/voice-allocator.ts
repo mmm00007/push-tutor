@@ -1,12 +1,16 @@
 /**
- * Polyphonic voice allocator.
- * Manages a pool of voices with note stealing when the max is exceeded.
+ * Polyphonic voice allocator with click-free envelopes.
+ * Uses setTargetAtTime for smooth exponential curves instead of
+ * linearRampToValueAtTime which can cause audible clicks.
  */
 
 import type { Voice, InstrumentPreset } from './types';
 import { midiToFrequency } from '@/lib/music-theory/notes';
 
-const MAX_VOICES = 16;
+const MAX_VOICES = 12;
+
+/** Time constant multiplier: reach ~95% of target in 3×tau. */
+const TAU_FACTOR = 0.33;
 
 export class VoiceAllocator {
   private voices: Map<number, Voice> = new Map();
@@ -25,12 +29,10 @@ export class VoiceAllocator {
   }
 
   noteOn(midi: number, velocity = 0.8): void {
-    // If this note is already playing, release it first
     if (this.voices.has(midi)) {
       this.releaseVoice(midi, true);
     }
 
-    // Steal oldest voice if at max
     if (this.voices.size >= MAX_VOICES) {
       const oldest = this.findOldestVoice();
       if (oldest !== null) {
@@ -64,38 +66,50 @@ export class VoiceAllocator {
     const now = this.ctx.currentTime;
     const freq = midiToFrequency(midi);
     const p = this.preset;
-    const vel = velocity * p.gain;
 
-    // Create filter
+    // Scale gain by velocity and reduce per-voice amplitude to prevent clipping
+    // when playing chords (rough 1/sqrt(n) scaling baked into preset gain)
+    const peakGain = velocity * p.gain * 0.35;
+
+    // Filter — use gentle settings to avoid resonance artifacts
     const filter = this.ctx.createBiquadFilter();
     filter.type = p.filterType;
-    filter.frequency.setValueAtTime(p.filterFreq, now);
-    filter.Q.setValueAtTime(p.filterQ, now);
+    filter.frequency.setValueAtTime(Math.min(p.filterFreq, this.ctx.sampleRate / 2.2), now);
+    filter.Q.setValueAtTime(Math.min(p.filterQ, 8), now);
 
-    // Create gain envelope
+    // Gain envelope — use setTargetAtTime for click-free exponential curves
     const gainNode = this.ctx.createGain();
-    gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(vel, now + p.attack);
-    gainNode.gain.linearRampToValueAtTime(vel * p.sustain, now + p.attack + p.decay);
+    gainNode.gain.setValueAtTime(0.0001, now); // start near zero (not zero — avoids denorm)
 
-    // Chain: oscillators -> filter -> gain -> output
+    // Attack: ramp up to peak
+    gainNode.gain.setTargetAtTime(peakGain, now, Math.max(p.attack * TAU_FACTOR, 0.002));
+
+    // Decay->sustain: after attack phase, settle to sustain level
+    const sustainGain = peakGain * p.sustain;
+    const decayStart = now + p.attack;
+    gainNode.gain.setTargetAtTime(sustainGain, decayStart, Math.max(p.decay * TAU_FACTOR, 0.005));
+
+    // Connect: oscillators -> filter -> gain -> output
     filter.connect(gainNode);
     gainNode.connect(this.output);
 
-    // Create oscillators
     const oscillators: OscillatorNode[] = [];
 
+    // Primary oscillator
     const osc1 = this.ctx.createOscillator();
     osc1.type = p.oscillatorType === 'custom' ? 'sine' : p.oscillatorType;
     osc1.frequency.setValueAtTime(freq, now);
-    osc1.detune.setValueAtTime(-p.detuneSpread / 2, now);
+    if (p.detuneSpread > 0) {
+      osc1.detune.setValueAtTime(-p.detuneSpread / 2, now);
+    }
     osc1.connect(filter);
     osc1.start(now);
     oscillators.push(osc1);
 
+    // Secondary oscillator (for layered presets)
     if (p.oscillatorCount === 2 && p.oscillator2Type) {
       const osc2Gain = this.ctx.createGain();
-      osc2Gain.gain.setValueAtTime(p.oscillator2Gain ?? 0.5, now);
+      osc2Gain.gain.setValueAtTime(p.oscillator2Gain ?? 0.4, now);
       osc2Gain.connect(filter);
 
       const osc2 = this.ctx.createOscillator();
@@ -107,20 +121,14 @@ export class VoiceAllocator {
       oscillators.push(osc2);
     }
 
-    // Filter envelope: quick sweep down for pluck-like timbres
-    if (p.decay < 0.3) {
-      filter.frequency.setValueAtTime(p.filterFreq * 2, now);
-      filter.frequency.exponentialRampToValueAtTime(p.filterFreq, now + p.decay);
+    // Filter envelope for plucky timbres — smooth sweep, not abrupt
+    if (p.decay < 0.25 && p.filterFreq > 500) {
+      const filterPeak = Math.min(p.filterFreq * 1.8, this.ctx.sampleRate / 2.2);
+      filter.frequency.setValueAtTime(filterPeak, now);
+      filter.frequency.setTargetAtTime(p.filterFreq, now, p.decay * 0.5);
     }
 
-    return {
-      oscillators,
-      gainNode,
-      filterNode: filter,
-      midi,
-      startTime: now,
-      releasing: false,
-    };
+    return { oscillators, gainNode, filterNode: filter, midi, startTime: now, releasing: false };
   }
 
   private releaseVoice(midi: number, immediate: boolean): void {
@@ -128,26 +136,31 @@ export class VoiceAllocator {
     if (!voice) return;
 
     const now = this.ctx.currentTime;
-    const releaseTime = immediate ? 0.01 : this.preset.release;
+    const releaseTime = immediate ? 0.015 : this.preset.release;
 
     voice.releasing = true;
+
+    // Cancel any scheduled ramps, anchor current value, then release smoothly
     voice.gainNode.gain.cancelScheduledValues(now);
     voice.gainNode.gain.setValueAtTime(voice.gainNode.gain.value, now);
-    voice.gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+    voice.gainNode.gain.setTargetAtTime(0.0001, now, Math.max(releaseTime * TAU_FACTOR, 0.005));
 
-    // Schedule cleanup
-    const cleanupTime = (releaseTime + 0.05) * 1000;
+    // Schedule cleanup after envelope has died out
+    const cleanupMs = (releaseTime + 0.1) * 1000;
+    const voiceRef = voice;
     setTimeout(() => {
       try {
-        voice.oscillators.forEach(osc => osc.stop());
-        voice.oscillators.forEach(osc => osc.disconnect());
-        voice.filterNode.disconnect();
-        voice.gainNode.disconnect();
+        voiceRef.oscillators.forEach(osc => osc.stop());
+        voiceRef.oscillators.forEach(osc => osc.disconnect());
+        voiceRef.filterNode.disconnect();
+        voiceRef.gainNode.disconnect();
       } catch {
         // Already stopped
       }
-      this.voices.delete(midi);
-    }, cleanupTime);
+      if (this.voices.get(midi) === voiceRef) {
+        this.voices.delete(midi);
+      }
+    }, cleanupMs);
   }
 
   private findOldestVoice(): number | null {

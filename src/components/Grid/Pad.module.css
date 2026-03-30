@@ -34,6 +34,12 @@
   border-color: var(--color-root-bright);
 }
 
+/* C notes in chromatic mode — octave landmark (blue tint like Push 3) */
+.octaveMarker {
+  background: var(--color-octave-marker);
+  border-color: var(--color-octave-marker-bright);
+}
+
 .pressed {
   background: var(--color-pressed) !important;
   transform: scale(0.93);

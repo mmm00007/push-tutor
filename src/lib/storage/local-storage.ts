@@ -41,6 +41,7 @@ export interface AppSettings {
   showNoteNames: boolean;
   hapticFeedback: boolean;
   octaveShift: number;
+  visibleRows: number;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -55,6 +56,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   showNoteNames: true,
   hapticFeedback: true,
   octaveShift: 0,
+  visibleRows: 8,
 };
 
 export function loadSettings(): AppSettings {
@@ -70,6 +72,7 @@ export function loadSettings(): AppSettings {
     showNoteNames: getItem('showNoteNames', DEFAULT_SETTINGS.showNoteNames),
     hapticFeedback: getItem('hapticFeedback', DEFAULT_SETTINGS.hapticFeedback),
     octaveShift: getItem('octaveShift', DEFAULT_SETTINGS.octaveShift),
+    visibleRows: getItem('visibleRows', DEFAULT_SETTINGS.visibleRows),
   };
 }
 

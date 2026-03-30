@@ -25,7 +25,7 @@ export {
 } from './chords';
 
 export {
-  type LayoutMode, type ScaleMode, type GridConfig, type PadInfo,
+  type LayoutMode, type ScaleMode, type GridConfig, type PadInfo, type VisibleRows,
   ROW_INTERVALS, DEFAULT_GRID_CONFIG,
   chromaticMidi, buildGrid, buildInKeyGrid, buildPadGrid,
 } from './grid';

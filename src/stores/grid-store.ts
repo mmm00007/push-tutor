@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import {
-  type LayoutMode, type ScaleMode, type GridConfig, type PadInfo,
+  type LayoutMode, type ScaleMode, type GridConfig, type PadInfo, type VisibleRows,
   type ScaleDefinition,
   SCALES, DEFAULT_GRID_CONFIG, buildPadGrid,
 } from '@/lib/music-theory';
@@ -11,12 +11,12 @@ interface GridState {
   pads: PadInfo[][];
   activeNotes: Set<number>;
 
-  // Actions
   setRoot: (pitchClass: number) => void;
   setScale: (scaleKey: string) => void;
   setLayout: (layout: LayoutMode) => void;
   setScaleMode: (mode: ScaleMode) => void;
   setOctaveShift: (shift: number) => void;
+  setVisibleRows: (rows: VisibleRows) => void;
   noteOn: (midi: number) => void;
   noteOff: (midi: number) => void;
   allNotesOff: () => void;
@@ -38,6 +38,7 @@ function initialConfig(): GridConfig {
     layout: (settings.lastLayout as LayoutMode) || 'fourths',
     scaleMode: (settings.lastScaleMode as ScaleMode) || 'chromatic',
     octaveShift: settings.octaveShift,
+    visibleRows: (settings.visibleRows as VisibleRows) || 8,
   };
 }
 
@@ -83,6 +84,13 @@ export const useGridStore = create<GridState>()((set) => {
         const clamped = Math.max(-3, Math.min(3, octaveShift));
         const config = { ...state.config, octaveShift: clamped };
         saveSettings({ octaveShift: clamped });
+        return { config, pads: rebuildPads(config) };
+      }),
+
+    setVisibleRows: (visibleRows) =>
+      set((state) => {
+        const config = { ...state.config, visibleRows };
+        saveSettings({ visibleRows });
         return { config, pads: rebuildPads(config) };
       }),
 
