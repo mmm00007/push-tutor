@@ -71,7 +71,7 @@ function findOptimalFingering(
  * excluding the primary fingering positions.
  */
 function findGhostPositions(
-  chordPitchClasses: Set<number>,
+  primaryMidis: Set<number>,
   primaryKeys: Set<string>,
   pads: PadInfo[][],
   numRows: number,
@@ -83,7 +83,8 @@ function findGhostPositions(
       const key = `${x},${y}`;
       if (primaryKeys.has(key)) continue;
       const pad = pads[y]?.[x];
-      if (pad?.midi != null && chordPitchClasses.has(pad.midi % 12)) {
+      // Only ghost exact same MIDI values (same note, same octave)
+      if (pad?.midi != null && primaryMidis.has(pad.midi)) {
         ghosts.push({ x, y });
       }
     }
@@ -149,9 +150,9 @@ export function SongsScreen() {
         primaryKeys.add(key);
       }
 
-      // Find and mark ghost positions (same pitch classes, different pads)
-      const pitchClasses = new Set(chord.intervals.map(i => (chord.rootPitchClass + i) % 12));
-      const ghosts = findGhostPositions(pitchClasses, primaryKeys, pads, numRows, config.gridSize);
+      // Find and mark ghost positions (exact same MIDI on different pads)
+      const primaryMidis = new Set(primary.map(p => p.midi));
+      const ghosts = findGhostPositions(primaryMidis, primaryKeys, pads, numRows, config.gridSize);
       for (const pos of ghosts) {
         overrides.set(`${pos.x},${pos.y}`, 'targetGhost');
       }
