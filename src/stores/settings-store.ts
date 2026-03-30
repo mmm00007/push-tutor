@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { type AppSettings, loadSettings, saveSettings, DEFAULT_SETTINGS } from '@/lib/storage';
 
-type Screen = 'practice' | 'lessons' | 'quiz' | 'settings';
+type Screen = 'practice' | 'controls' | 'lessons' | 'quiz' | 'settings';
 
 interface SettingsState extends AppSettings {
   currentScreen: Screen;

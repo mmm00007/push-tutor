@@ -1,0 +1,109 @@
+.container {
+  padding: var(--space-md);
+  overflow-y: auto;
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+  max-width: 500px;
+}
+
+.heading {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-lg);
+}
+
+.section {
+  margin-bottom: var(--space-lg);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-sm);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  min-height: 44px;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  flex-shrink: 0;
+  min-width: 70px;
+}
+
+.select {
+  flex: 1;
+  max-width: 200px;
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-sans);
+}
+
+.select:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.btnGroup {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: 6px 12px;
+  font-size: var(--font-size-sm);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-dim);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+  min-height: 36px;
+}
+
+.btn:hover {
+  background: var(--color-surface-3);
+}
+
+.btn.active {
+  background: var(--color-accent);
+  color: var(--color-text);
+  border-color: var(--color-accent);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.value {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  min-width: 36px;
+  text-align: center;
+  font-family: var(--font-mono);
+}
+
+.slider {
+  flex: 1;
+  max-width: 160px;
+  accent-color: var(--color-accent);
+  height: 4px;
+}

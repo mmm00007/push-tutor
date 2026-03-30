@@ -6,7 +6,8 @@ interface AppShellProps {
 }
 
 const NAV_ITEMS: { screen: Screen; label: string; icon: string }[] = [
-  { screen: 'practice', label: 'Practice', icon: '⌨' },
+  { screen: 'practice', label: 'Play', icon: '▶' },
+  { screen: 'controls', label: 'Controls', icon: '♫' },
   { screen: 'lessons', label: 'Lessons', icon: '📖' },
   { screen: 'quiz', label: 'Quiz', icon: '✓' },
   { screen: 'settings', label: 'Settings', icon: '⚙' },

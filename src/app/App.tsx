@@ -2,6 +2,7 @@ import { AudioGate } from '@/components/AudioGate/AudioGate';
 import { AppShell } from '@/components/Layout/AppShell';
 import { Onboarding } from '@/features/onboarding/Onboarding';
 import { FreePlay } from '@/features/practice/FreePlay';
+import { ControlsScreen } from '@/features/controls/ControlsScreen';
 import { LessonList } from '@/features/lessons/LessonList';
 import { LessonView } from '@/features/lessons/LessonView';
 import { QuizMode } from '@/features/quiz/QuizMode';
@@ -14,7 +15,6 @@ function ScreenRouter() {
   const currentLessonId = useLessonStore(s => s.currentLessonId);
   const quizActive = useLessonStore(s => s.quizActive);
 
-  // Lesson/quiz view takes over when active
   if (screen === 'lessons' && currentLessonId && !quizActive) {
     return <LessonView />;
   }
@@ -22,6 +22,8 @@ function ScreenRouter() {
   switch (screen) {
     case 'practice':
       return <FreePlay />;
+    case 'controls':
+      return <ControlsScreen />;
     case 'lessons':
       return <LessonList />;
     case 'quiz':
