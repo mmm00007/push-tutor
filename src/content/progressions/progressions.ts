@@ -102,7 +102,7 @@ const MAJOR: GridOffset[] = [
   { dx: 2, dy: 1, label: '5' },
 ];
 
-export const SADE_PROGRESSIONS: Progression[] = [
+export const PROGRESSIONS: Progression[] = [
   {
     id: 'smooth-operator',
     title: 'Smooth Operator',
@@ -181,6 +181,129 @@ export const SADE_PROGRESSIONS: Progression[] = [
       { name: 'Dbmaj7', rootPitchClass: 1, intervals: [0, 4, 7, 11], shape: MAJ7, beats: 8 },
       { name: 'Cm7', rootPitchClass: 0, intervals: [0, 3, 7, 10], shape: MIN7, beats: 4 },
       { name: 'Fm7', rootPitchClass: 5, intervals: [0, 3, 7, 10], shape: MIN7, beats: 4 },
+    ],
+  },
+
+  // --- Neo-Soul Classics ---
+
+  {
+    id: 'erykah-tyrone',
+    title: 'Tyrone',
+    artist: 'Erykah Badu',
+    song: 'Tyrone',
+    description: 'Sparse minor groove anchored by a two-chord vamp. The space between the chords is the whole vibe.',
+    tempo: 88,
+    chords: [
+      { name: 'Gm7', rootPitchClass: 7, intervals: [0, 3, 7, 10], shape: MIN7, beats: 8 },
+      { name: 'Cm7', rootPitchClass: 0, intervals: [0, 3, 7, 10], shape: MIN7, beats: 8 },
+    ],
+  },
+  {
+    id: 'erykah-on-and-on',
+    title: 'On & On',
+    artist: 'Erykah Badu',
+    song: 'On & On',
+    description: 'Dreamy minor 9ths floating over a laid-back groove. The blueprint for neo-soul harmony.',
+    tempo: 82,
+    chords: [
+      { name: 'Am9', rootPitchClass: 9, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 8 },
+      { name: 'Em9', rootPitchClass: 4, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 8 },
+    ],
+  },
+  {
+    id: 'dangelo-untitled',
+    title: 'Untitled (How Does It Feel)',
+    artist: 'D\'Angelo',
+    song: 'Untitled (How Does It Feel)',
+    description: 'Slow-burn chromatic descending movement through minor 7ths. Every chord melts into the next.',
+    tempo: 68,
+    chords: [
+      { name: 'Dm9', rootPitchClass: 2, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 8 },
+      { name: 'C#m9', rootPitchClass: 1, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 4 },
+      { name: 'Cm9', rootPitchClass: 0, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 4 },
+      { name: 'Bm9', rootPitchClass: 11, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 8 },
+    ],
+  },
+  {
+    id: 'dangelo-brown-sugar',
+    title: 'Brown Sugar',
+    artist: 'D\'Angelo',
+    song: 'Brown Sugar',
+    description: 'Classic ii-V-I neo-soul with 9th extensions and a lush major 9 resolution.',
+    tempo: 98,
+    chords: [
+      { name: 'Em9', rootPitchClass: 4, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 4 },
+      { name: 'A7', rootPitchClass: 9, intervals: [0, 4, 7, 10], shape: DOM7, beats: 4 },
+      { name: 'Dmaj9', rootPitchClass: 2, intervals: [0, 4, 7, 11, 14], shape: MAJ9, beats: 8 },
+    ],
+  },
+  {
+    id: 'lauryn-everything',
+    title: 'Everything Is Everything',
+    artist: 'Lauryn Hill',
+    song: 'Everything Is Everything',
+    description: 'Bright piano-driven progression with major 7th warmth. Uplifting and rhythmic.',
+    tempo: 100,
+    chords: [
+      { name: 'Bbmaj7', rootPitchClass: 10, intervals: [0, 4, 7, 11], shape: MAJ7, beats: 4 },
+      { name: 'Am7', rootPitchClass: 9, intervals: [0, 3, 7, 10], shape: MIN7, beats: 4 },
+      { name: 'Gm7', rootPitchClass: 7, intervals: [0, 3, 7, 10], shape: MIN7, beats: 4 },
+      { name: 'Fmaj7', rootPitchClass: 5, intervals: [0, 4, 7, 11], shape: MAJ7, beats: 4 },
+    ],
+  },
+  {
+    id: 'jill-scott-golden',
+    title: 'Golden',
+    artist: 'Jill Scott',
+    song: 'Golden',
+    description: 'Radiant ascending progression. Major 7ths and sus chords create a feeling of pure joy.',
+    tempo: 104,
+    chords: [
+      { name: 'Ebmaj7', rootPitchClass: 3, intervals: [0, 4, 7, 11], shape: MAJ7, beats: 4 },
+      { name: 'Fm7', rootPitchClass: 5, intervals: [0, 3, 7, 10], shape: MIN7, beats: 4 },
+      { name: 'Gsus4', rootPitchClass: 7, intervals: [0, 5, 7], shape: SUS4, beats: 4 },
+      { name: 'Abmaj7', rootPitchClass: 8, intervals: [0, 4, 7, 11], shape: MAJ7, beats: 4 },
+    ],
+  },
+  {
+    id: 'musiq-love',
+    title: 'Love',
+    artist: 'Musiq Soulchild',
+    song: 'Love',
+    description: 'Smooth R&B cycle of minor and major 7ths. The dominant 7 at the end pulls you back to the top.',
+    tempo: 78,
+    chords: [
+      { name: 'Cm9', rootPitchClass: 0, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 4 },
+      { name: 'Fm9', rootPitchClass: 5, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 4 },
+      { name: 'Bbmaj7', rootPitchClass: 10, intervals: [0, 4, 7, 11], shape: MAJ7, beats: 4 },
+      { name: 'G7', rootPitchClass: 7, intervals: [0, 4, 7, 10], shape: DOM7, beats: 4 },
+    ],
+  },
+  {
+    id: 'maxwell-ascension',
+    title: 'Ascension (Don\'t Ever Wonder)',
+    artist: 'Maxwell',
+    song: 'Ascension (Don\'t Ever Wonder)',
+    description: 'Ethereal minor 9th vamp with a major 7th lift. Maxwell at his most atmospheric.',
+    tempo: 90,
+    chords: [
+      { name: 'Ebm9', rootPitchClass: 3, intervals: [0, 3, 7, 10, 14], shape: MIN9, beats: 8 },
+      { name: 'Dbmaj7', rootPitchClass: 1, intervals: [0, 4, 7, 11], shape: MAJ7, beats: 4 },
+      { name: 'Gbmaj7', rootPitchClass: 6, intervals: [0, 4, 7, 11], shape: MAJ7, beats: 4 },
+    ],
+  },
+  {
+    id: 'india-arie-ready',
+    title: 'Ready for Love',
+    artist: 'India.Arie',
+    song: 'Ready for Love',
+    description: 'Gentle acoustic soul. Warm descending major and minor 7ths with a sus resolution.',
+    tempo: 86,
+    chords: [
+      { name: 'Gmaj7', rootPitchClass: 7, intervals: [0, 4, 7, 11], shape: MAJ7, beats: 4 },
+      { name: 'F#m7', rootPitchClass: 6, intervals: [0, 3, 7, 10], shape: MIN7, beats: 4 },
+      { name: 'Em7', rootPitchClass: 4, intervals: [0, 3, 7, 10], shape: MIN7, beats: 4 },
+      { name: 'Dsus4', rootPitchClass: 2, intervals: [0, 5, 7], shape: SUS4, beats: 4 },
     ],
   },
 ];

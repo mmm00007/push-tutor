@@ -1,3 +1,4 @@
+/* --- Song list --- */
 .container {
   padding: var(--space-md);
   overflow-y: auto;
@@ -73,7 +74,7 @@
   color: var(--color-text-muted);
 }
 
-/* Detail view */
+/* --- Detail view --- */
 .detail {
   display: flex;
   flex-direction: column;
@@ -81,20 +82,68 @@
   overflow: hidden;
 }
 
+/*
+ * Landscape: chord sidebar on the left, grid fills the rest.
+ * The header + sidebar + grid form a row layout.
+ */
+@media (orientation: landscape) {
+  .detail {
+    flex-direction: row;
+  }
+}
+
+/* --- Sidebar: header + chords --- */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  background: var(--color-surface);
+}
+
+/* Portrait: sidebar is a horizontal strip at the top */
+@media (orientation: portrait) {
+  .sidebar {
+    border-bottom: 1px solid var(--color-border);
+  }
+}
+
+/* Landscape: sidebar is a vertical strip on the left */
+@media (orientation: landscape) {
+  .sidebar {
+    width: 76px;
+    border-right: 1px solid var(--color-border);
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* --- Header inside sidebar --- */
 .detailHeader {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   padding: var(--space-xs) var(--space-sm);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 }
 
+@media (orientation: landscape) {
+  .detailHeader {
+    flex-direction: column;
+    padding: var(--space-xs);
+    gap: 4px;
+    border-bottom: 1px solid var(--color-border);
+  }
+}
+
 .backBtn {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-accent-bright);
-  padding: var(--space-xs) var(--space-sm);
+  padding: 2px 6px;
   flex-shrink: 0;
 }
 
@@ -105,29 +154,42 @@
   min-width: 0;
 }
 
+@media (orientation: landscape) {
+  .detailTitle {
+    align-items: center;
+    text-align: center;
+  }
+}
+
 .songName {
   font-weight: 600;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .songArtist {
-  font-size: var(--font-size-xs);
+  font-size: 0.55rem;
   color: var(--color-text-dim);
 }
 
 .playBtn {
-  padding: 6px 14px;
+  padding: 4px 10px;
   background: var(--color-accent);
   color: #fff;
-  border-radius: 6px;
-  font-size: var(--font-size-sm);
+  border-radius: 5px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   flex-shrink: 0;
-  min-width: 72px;
+  min-width: 56px;
   text-align: center;
+}
+
+@media (orientation: landscape) {
+  .playBtn {
+    width: 100%;
+  }
 }
 
 .playBtn:hover {
@@ -138,14 +200,11 @@
   background: var(--color-incorrect);
 }
 
-/* Chord bar */
+/* --- Chord chips --- */
 .chordBar {
   display: flex;
-  gap: 4px;
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  overflow-x: auto;
+  gap: 3px;
+  padding: var(--space-xs);
   flex-shrink: 0;
   scrollbar-width: none;
 }
@@ -154,18 +213,47 @@
   display: none;
 }
 
+/* Portrait: horizontal scrolling strip */
+@media (orientation: portrait) {
+  .chordBar {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+}
+
+/* Landscape: vertical column */
+@media (orientation: landscape) {
+  .chordBar {
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+}
+
 .chordChip {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  padding: 4px 12px;
+  padding: 4px 8px;
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 5px;
   flex-shrink: 0;
   transition: background var(--transition-fast), border-color var(--transition-fast);
-  min-width: 52px;
+}
+
+@media (orientation: portrait) {
+  .chordChip {
+    min-width: 48px;
+  }
+}
+
+@media (orientation: landscape) {
+  .chordChip {
+    width: 100%;
+  }
 }
 
 .chordChip:hover {
@@ -178,16 +266,25 @@
 }
 
 .chordName {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   font-family: var(--font-mono);
+  line-height: 1.2;
 }
 
 .chordRoot {
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   color: var(--color-text-dim);
 }
 
 .chordActive .chordRoot {
   color: rgba(255, 255, 255, 0.7);
+}
+
+/* Grid area fills remaining space */
+.gridArea {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
 }

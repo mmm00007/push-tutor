@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { SADE_PROGRESSIONS, type Progression, type ProgressionChord } from '@/content/progressions/sade-progressions';
+import { PROGRESSIONS, type Progression, type ProgressionChord } from '@/content/progressions/progressions';
 import { useAudioStore } from '@/stores/audio-store';
 import { useGridStore } from '@/stores/grid-store';
 import { Grid } from '@/components/Grid/Grid';
@@ -26,7 +26,7 @@ export function SongsScreen() {
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const playingRef = useRef(false);
 
-  const BASE_OCTAVE_MIDI = 48; // C2
+  const BASE_OCTAVE_MIDI = 48;
 
   const stopPlayback = useCallback(() => {
     playingRef.current = false;
@@ -38,7 +38,6 @@ export function SongsScreen() {
     if (timerRef.current) clearTimeout(timerRef.current);
   }, [audioAllOff, gridAllOff]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       playingRef.current = false;
@@ -83,11 +82,9 @@ export function SongsScreen() {
       setCurrentChordIdx(chordIndex % prog.chords.length);
       playChord(chord);
 
-      // Schedule release + next chord
       timerRef.current = setTimeout(() => {
         releaseChord(chord);
         chordIndex++;
-        // Loop through the progression twice then stop
         if (chordIndex < prog.chords.length * 2 && playingRef.current) {
           timerRef.current = setTimeout(playNext, beatMs * 0.5);
         } else {
@@ -108,7 +105,7 @@ export function SongsScreen() {
           Iconic chord progressions on the grid. Tap to explore, play to hear them loop.
         </p>
         <div className={styles.list}>
-          {SADE_PROGRESSIONS.map(prog => (
+          {PROGRESSIONS.map(prog => (
             <button
               key={prog.id}
               className={styles.card}
@@ -130,48 +127,52 @@ export function SongsScreen() {
     );
   }
 
-  // Progression detail + grid view
+  // Detail view: sidebar (header + chord chips) | grid
   return (
     <div className={styles.detail}>
-      <div className={styles.detailHeader}>
-        <button className={styles.backBtn} onClick={() => { stopPlayback(); setSelected(null); }}>
-          ← Back
-        </button>
-        <div className={styles.detailTitle}>
-          <span className={styles.songName}>{selected.title}</span>
-          <span className={styles.songArtist}>{selected.artist} · {selected.tempo} BPM</span>
-        </div>
-        <button
-          className={`${styles.playBtn} ${playing ? styles.playing : ''}`}
-          onClick={() => playing ? stopPlayback() : startPlayback(selected)}
-        >
-          {playing ? '■ Stop' : '▶ Play'}
-        </button>
-      </div>
-
-      <div className={styles.chordBar}>
-        {selected.chords.map((chord, i) => (
-          <button
-            key={i}
-            className={`${styles.chordChip} ${i === currentChordIdx ? styles.chordActive : ''}`}
-            onClick={() => {
-              stopPlayback();
-              setCurrentChordIdx(i);
-              playChord(chord);
-              setTimeout(() => {
-                releaseChord(chord);
-                setPadOverrides(new Map());
-                setCurrentChordIdx(-1);
-              }, 1500);
-            }}
-          >
-            <span className={styles.chordName}>{chord.name}</span>
-            <span className={styles.chordRoot}>{noteName(chord.rootPitchClass)}</span>
+      <div className={styles.sidebar}>
+        <div className={styles.detailHeader}>
+          <button className={styles.backBtn} onClick={() => { stopPlayback(); setSelected(null); }}>
+            ← Back
           </button>
-        ))}
+          <div className={styles.detailTitle}>
+            <span className={styles.songName}>{selected.title}</span>
+            <span className={styles.songArtist}>{selected.artist} · {selected.tempo} BPM</span>
+          </div>
+          <button
+            className={`${styles.playBtn} ${playing ? styles.playing : ''}`}
+            onClick={() => playing ? stopPlayback() : startPlayback(selected)}
+          >
+            {playing ? '■ Stop' : '▶ Play'}
+          </button>
+        </div>
+
+        <div className={styles.chordBar}>
+          {selected.chords.map((chord, i) => (
+            <button
+              key={i}
+              className={`${styles.chordChip} ${i === currentChordIdx ? styles.chordActive : ''}`}
+              onClick={() => {
+                stopPlayback();
+                setCurrentChordIdx(i);
+                playChord(chord);
+                setTimeout(() => {
+                  releaseChord(chord);
+                  setPadOverrides(new Map());
+                  setCurrentChordIdx(-1);
+                }, 1500);
+              }}
+            >
+              <span className={styles.chordName}>{chord.name}</span>
+              <span className={styles.chordRoot}>{noteName(chord.rootPitchClass)}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      <Grid padStateOverrides={padOverrides} />
+      <div className={styles.gridArea}>
+        <Grid padStateOverrides={padOverrides} />
+      </div>
     </div>
   );
 }
