@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useGridStore } from '@/stores/grid-store';
 import { useAudioStore } from '@/stores/audio-store';
 import { useSettingsStore } from '@/stores/settings-store';
@@ -120,12 +120,17 @@ export function Grid({ targetShape, targetRootX = 0, targetRootY = 0, padStateOv
     }
   }
 
+  const [hintDismissed, setHintDismissed] = useState(false);
+
   return (
     <>
-      <div className={styles.rotateHint} role="alert">
-        <span className={styles.rotateIcon} aria-hidden="true">↻</span>
-        <span>Rotate your device to landscape for the best experience</span>
-      </div>
+      {!hintDismissed && (
+        <div className={styles.rotateHint}>
+          <span className={styles.rotateIcon} aria-hidden="true">↻</span>
+          <span>Landscape mode gives you bigger pads</span>
+          <button className={styles.dismissBtn} onClick={() => setHintDismissed(true)}>OK</button>
+        </div>
+      )}
       <div className={styles.gridWrapper} onContextMenu={e => e.preventDefault()}>
         <div
           className={styles.grid}

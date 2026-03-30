@@ -1,68 +1,63 @@
+/* Grid fills all available space via flex parent */
 .gridWrapper {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: var(--space-sm);
+  min-height: 0;
+  min-width: 0;
+  padding: var(--space-xs);
   touch-action: none;
   overscroll-behavior: none;
+  overflow: hidden;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  /* grid-template-rows set via inline style for zoom */
+  /* grid-template-rows + aspect-ratio set via inline style for zoom */
   gap: var(--pad-gap);
-  /* aspect-ratio set via inline style for zoom */
   max-height: 100%;
   max-width: 100%;
-  width: auto;
-  height: auto;
   touch-action: none;
 }
 
-/* Landscape: constrain by height */
-@media (orientation: landscape) {
-  .grid {
-    height: min(calc(100vh - 80px), calc(100vw - 240px));
-    width: auto;
-  }
-}
+/*
+ * Landscape: grid constrained by height (short axis).
+ * Portrait: grid constrained by width (short axis).
+ * In both cases the grid auto-sizes via max-height/max-width
+ * and the aspect-ratio set inline.
+ */
 
-/* Portrait: constrain by width */
-@media (orientation: portrait) {
-  .grid {
-    width: min(calc(100vw - 16px), calc(100vh - 200px));
-    height: auto;
-  }
-}
-
+/* Gentle landscape suggestion — only on very small portrait screens */
 .rotateHint {
   display: none;
-  position: fixed;
-  inset: 0;
-  background: var(--color-bg);
-  color: var(--color-text-dim);
-  z-index: 100;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-md);
-  font-size: var(--font-size-lg);
+  gap: var(--space-sm);
+  padding: 6px var(--space-md);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
 }
 
-/* Show rotate hint on very narrow portrait phones */
-@media (orientation: portrait) and (max-width: 480px) and (max-height: 700px) {
+@media (orientation: portrait) and (max-width: 480px) {
   .rotateHint {
     display: flex;
-  }
-  .gridWrapper {
-    display: none;
   }
 }
 
 .rotateIcon {
-  font-size: 3rem;
-  opacity: 0.6;
+  font-size: 1rem;
+  opacity: 0.5;
+}
+
+.dismissBtn {
+  margin-left: auto;
+  padding: 2px 8px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-dim);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
 }

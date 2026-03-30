@@ -1,27 +1,35 @@
 .controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm) var(--space-md);
-  padding: var(--space-sm) var(--space-md);
+  flex-wrap: nowrap;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
   align-items: center;
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
+  /* Hide scrollbar but allow scroll */
+  scrollbar-width: none;
+}
+
+.controls::-webkit-scrollbar {
+  display: none;
 }
 
 .group {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 3px;
   flex-shrink: 0;
 }
 
 .label {
-  font-size: var(--font-size-xs);
+  font-size: 0.6rem;
   color: var(--color-text-dim);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   white-space: nowrap;
 }
 
@@ -30,10 +38,11 @@
   color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: 4px;
-  padding: 4px 8px;
-  font-size: var(--font-size-sm);
+  padding: 3px 6px;
+  font-size: var(--font-size-xs);
   font-family: var(--font-sans);
-  min-width: 80px;
+  min-width: 64px;
+  max-width: 100px;
 }
 
 .select:focus-visible {
@@ -43,21 +52,20 @@
 
 .buttonGroup {
   display: flex;
-  gap: 2px;
-  background: var(--color-surface);
-  border-radius: 4px;
+  gap: 1px;
   align-items: center;
 }
 
 .toggleBtn {
-  padding: 4px 10px;
-  font-size: var(--font-size-sm);
+  padding: 3px 7px;
+  font-size: var(--font-size-xs);
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: 3px;
   color: var(--color-text-dim);
   transition: background var(--transition-fast), color var(--transition-fast);
   white-space: nowrap;
+  min-height: 28px;
 }
 
 .toggleBtn:hover {
@@ -76,9 +84,26 @@
 }
 
 .octaveValue {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-text);
-  min-width: 28px;
+  min-width: 22px;
   text-align: center;
   font-family: var(--font-mono);
+}
+
+/* Landscape: even more compact */
+@media (orientation: landscape) {
+  .controls {
+    padding: 3px var(--space-sm);
+    gap: var(--space-xs);
+  }
+
+  .toggleBtn {
+    padding: 2px 6px;
+    min-height: 24px;
+  }
+
+  .select {
+    padding: 2px 4px;
+  }
 }

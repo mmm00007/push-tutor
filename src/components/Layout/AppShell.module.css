@@ -6,7 +6,7 @@
   overflow: hidden;
 }
 
-/* In landscape, nav on the left */
+/* Landscape: nav as a narrow sidebar on the right */
 @media (orientation: landscape) {
   .shell {
     flex-direction: row-reverse;
@@ -19,14 +19,17 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  min-width: 0;
 }
+
+/* --- Bottom nav (portrait) / Side nav (landscape) --- */
 
 .nav {
   display: flex;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
-  padding: var(--space-xs) 0;
   flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @media (orientation: landscape) {
@@ -34,8 +37,11 @@
     flex-direction: column;
     border-top: none;
     border-left: 1px solid var(--color-border);
-    padding: var(--space-sm) 0;
-    width: 64px;
+    width: 52px;
+    padding: var(--space-xs) 0;
+    padding-right: env(safe-area-inset-right, 0px);
+    justify-content: center;
+    gap: var(--space-xs);
   }
 }
 
@@ -45,11 +51,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: var(--space-xs);
+  gap: 1px;
+  padding: 6px 2px;
   color: var(--color-text-dim);
   transition: color var(--transition-fast);
-  min-height: 44px;
+  min-height: 40px;
+}
+
+@media (orientation: landscape) {
+  .navBtn {
+    flex: 0;
+    padding: 8px 4px;
+  }
 }
 
 .navBtn:hover {
@@ -61,16 +74,10 @@
 }
 
 .navIcon {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .navLabel {
-  font-size: var(--font-size-xs);
-}
-
-@media (orientation: landscape) {
-  .navBtn {
-    flex: 0;
-    padding: var(--space-sm) var(--space-xs);
-  }
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
 }
